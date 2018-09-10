@@ -1,3 +1,9 @@
+
+
+
+
+
+
 var inquirer = require('inquirer');
 var Letter = require("./letter.js");
 var chalk = require("chalk");
@@ -12,92 +18,63 @@ var game = {
     losses: 0,
     turns: 9,
     pickWord: function () {
-        // console.log("inside pickWord()");
-
-
-        this.word = this.wordArray[Math.floor((Math.random() * 2))];
-
-        // console.log("word picked: " + this.word);
+             this.word = this.wordArray[Math.floor((Math.random() * 2))];
     },
 
     lettersIntoArray: function () {
-        // console.log("inside lettersIntoArray()");
         var splitString = this.word.split("");
         for (var i = 0; i < splitString.length; i++) {
             this.singleLettersArray.push(splitString[i]);
-        }
-        // console.log(this.singleLettersArray);
+        };
     },
 
     createLetterArray: function (singleLettersArray) {
-        // console.log("inside createLetterArray()")
         for (var j = 0; j < this.singleLettersArray.length; j++) {
             var letter = new Letter(this.singleLettersArray[j], false);
-
             this.displayArray.push(letter.typeDisplayed());
-
-
-            // this.displayArray.push(letter);
-        }
-        // console.log(this.displayArray);
+        };
         var display = this.displayArray.join(" ");
-        console.log(display)
-        // console.log(this.displayArray.toString())
-        // console.log("---------------");
+        console.log(chalk.red(`       
+                ${display}
+                             `));
     },
 
     checkLetter: function (x) {
         var hasAlreadyBeenGuessed = false;
-        // console.log("inside checkLetter()")
-        // check to see if it has been guessed before
-        // console.log(x);
-        // console.log(this.guessedLettersArray);
         for (var s = 0; s < this.guessedLettersArray.length; s++) {
-
             if (x === this.guessedLettersArray[s]) {
                 console.log("you have already guessed " + x);
                 hasAlreadyBeenGuessed = true;
-                // return this.userInputLetter();
-
-            }
+            };
         };
 
         if (!hasAlreadyBeenGuessed) {
             this.guessedLettersArray.push(x);
-            // console.log(game.guessedLettersArray);
-
             var letterIndex;
             var isInWord = false;
 
             for (var k = 0; k < this.singleLettersArray.length; k++) {
                 if (x === this.singleLettersArray[k]) {
                     isInWord = true;
-                    // console.log("the letter guessed is in the word")
                     letterIndex = k;
-                    // the letter is in the word
-                    // something like find; letter.name that matches x
-                    // change; letter.isInWord to true
                     var letter = new Letter(x, true);
                     this.displayArray[letterIndex] = letter.typeDisplayed();
-
-
-
                 };
             };
 
-// console.log(this.displayArray);
-var display1 = this.displayArray.join(" ");
-console.log(chalk.red(display1));
-game.checkAnswer();
+            var display1 = this.displayArray.join(" ");
+            console.log(chalk.red(`       
+                ${display1}
+                                        `));
+            // game.checkAnswer();
 
             if (!isInWord) {
-                this.turns--;
-                console.log(x + " is not in the word.");
-                console.log(this.turns + " guesses remaining.");
+                // this.turns--;
+                // console.log(x + " is not in the word.");
+                // console.log(this.turns + " guesses remaining.");
 
                 if (this.turns === 0) {
                     this.losses++;
-
                     console.log("You Lost, Maybe Try Harder Next Time....");
                     game.displayScore();
 
@@ -109,7 +86,6 @@ game.checkAnswer();
                         },
                     ])
                         .then(function (again) {
-                            // console.log(again.playAgain);
                             if (again.playAgain) {
                                 console.log("Get ready to play!");
                                 game.anotherWord();
@@ -117,30 +93,29 @@ game.checkAnswer();
                                 console.log("Thanks for playing.")
                                 game.displayScore();
                                 return;
-                            }
-
+                            };
                         });
 
                 };
-               
+
+                this.turns--;
+                console.log(x + " is not in the word.");
+                console.log(this.turns + " guesses remaining.");
+                hasAlreadyBeenGuessed = false;
+                game.userInputLetter();
+
+            } else {
+                game.checkAnswer();
             };
-
-
-
-
-
-            
-
 
         } else {
             hasAlreadyBeenGuessed = false;
             game.userInputLetter();
-        }
+        };
 
     },
 
     userInputLetter: function () {
-        // console.log("inside userinputletter()")
         inquirer.prompt([
             {
                 type: "input",
@@ -149,23 +124,15 @@ game.checkAnswer();
             },
         ])
             .then(function (user) {
-                // console.log(user.letterGuessed);
                 game.checkLetter(user.letterGuessed)
-
-
-
             });
     },
 
     checkAnswer: function () {
-
-
         if (this.singleLettersArray.toString() === this.displayArray.toString()) {
-            // word has been guessed
             console.log(chalk.green("you won"));
             this.wins++;
             game.displayScore();
-            // call a reset function();
             inquirer.prompt([
                 {
                     type: "confirm",
@@ -174,29 +141,24 @@ game.checkAnswer();
                 },
             ])
                 .then(function (again) {
-                    // console.log(again.playAgain);
                     if (again.playAgain) {
-                        console.log(chalk.yellow("Get ready to play!"));
+                        console.log(chalk.yellow(`
+                        Get ready to play!
+                        `));
                         game.anotherWord();
                     } else {
                         console.log("Thanks for playing.")
                         game.displayScore();
                         return;
-                    }
-
+                    };
                 });
 
-
-
         } else {
-            // keep guessing
             game.userInputLetter();
-        }
+        };
     },
 
     anotherWord: function () {
-        // console.log("inside anotherWord()")
-
         this.displayArray = [];
         this.guessedLettersArray = [];
         this.singleLettersArray = [];
@@ -207,7 +169,6 @@ game.checkAnswer();
         game.lettersIntoArray();
         game.createLetterArray();
         game.userInputLetter();
-
     },
 
     displayScore: function () {
@@ -215,7 +176,7 @@ game.checkAnswer();
          ----Your Score----
         Wins    ${this.wins}
         Losses  ${this.losses}`));
-    }
+    },
 
 };
 
@@ -230,7 +191,6 @@ inquirer
         },
     ])
     .then(function (gameStart) {
-        // console.log(gameStart.confirm);
         console.log(chalk.yellow("Get ready to Play!"));
         if (gameStart.confirm) {
             // start game
@@ -244,15 +204,4 @@ inquirer
             console.log("Maybe next time!");
         }
     }); // end of first inquirer prompt
-
-
-
-
-
-
-
-
-
-
-
 

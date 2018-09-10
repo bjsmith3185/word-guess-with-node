@@ -1,12 +1,12 @@
 
 
+
 var inquirer = require('inquirer');
 var Letter = require("./letter.js");
-var Word = require("./word.js");
 var chalk = require("chalk");
 
 var game = {
-    // wordArray: ["dog", "cat", "bird", "duck"],
+    wordArray: ["dog", "cat", "bird", "duck"],
     displayArray: [],
     guessedLettersArray: [],
     word: "",
@@ -15,8 +15,7 @@ var game = {
     losses: 0,
     turns: 9,
     pickWord: function () {
-           var newWord = new Word();
-           this.word = newWord.randomWord();
+             this.word = this.wordArray[Math.floor((Math.random() * 2))];
     },
 
     lettersIntoArray: function () {
